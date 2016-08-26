@@ -13,7 +13,7 @@ Please note this content will always be work in progress and demo content is to 
 # Resources
 -   VS Dev Essentials: https://www.visualstudio.com/en-us/products/visual-studio-dev-essentials-vs.aspx
 -   IT Pro Cloud Essentials: https://www.itprocloudessentials.com/   
--   DevOps Fundamentals: https://channel9.msdn.com/Series/DevOps-Fundamentals 
--   DevOps Dimensions: https://channel9.msdn.com/Shows/DevOps-Dimension 
--   The Container Channelhttps://channel9.msdn.com/Blogs/containers 
--   Get access to free online training: https://mva.microsoft.com/training-topics/devops 
+-   DevOps Fundamentals: https://channel9.msdn.com/Series/DevOps-Fundamentals 
+-   DevOps Dimensions: https://channel9.msdn.com/Shows/DevOps-Dimension 
+-   The Container Channel: https://channel9.msdn.com/Blogs/containers 
+-   Get access to free online training: https://mva.microsoft.com/training-topics/devops 
