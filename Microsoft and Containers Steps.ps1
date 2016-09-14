@@ -37,18 +37,23 @@ docker info
 # Show images, should just be core base image and coreiis
 docker images
 
+
+# Show Docker Hub
+Start-Process 'https://hub.docker.com/search/?isAutomated=0&isOfficial=0&page=1&pullCount=0&q=iis&starCount=0'
+
+# How built
 cd "CoreIIS"
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" .
 # Already built this using: docker build --tag 'coreiis' .
 
 #Nothing running on port 80...
-Start-Process "http://$($ServerCoreIP)"
+Start-Process "http://$($ServerCoreIP):81"
 
 # run container based on that image
-docker run --name 'coreiis1' -d -p 80:80 'coreiis'
+docker run --name 'coreiis1' -d -p 81:80 'coreiis'
 
 # view web output
-Start-Process "http://$($ServerCoreIP)"
+Start-Process "http://$($ServerCoreIP):81"
 
 # change to website demo
 cd "..\CoreWindowsWebsite"
@@ -58,13 +63,13 @@ cd "..\CoreWindowsWebsite"
 docker build --tag 'windowswebsite' .
 
 # view nothign on port 81
-Start-Process "http://$($ServerCoreIP):81"
+Start-Process "http://$($ServerCoreIP):82"
 
-#start container based on new image on port 81
-docker run --name 'windowswebsite2' -d -p 81:80 'windowswebsite'
+#start container based on new image on port 82
+docker run --name 'windowswebsite1' -d -p 50011:82 'windowswebsite'
 
 # view output
-Start-Process "http://$($ServerCoreIP):81"
+Start-Process "http://$($ServerCoreIP):82"
 
 # view all containers
 docker ps -a
@@ -76,14 +81,14 @@ Get-Container | Remove-Container -Force
 Get-Container
 
 # Proof gone!
-Start-Process "http://$($ServerCoreIP)"
+Start-Process "http://$($ServerCoreIP):82"
 
 #endregion
 
 #region Docker for Windows
 # HAVE A LOOK at Hyper-V and GUI
 
-# connect to Docker for Windows - as I was connected elsewhere
+# connect to Docker for Windows - as I was connected to server core in Azure
 $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 
 # now connected to Linux OS
@@ -106,8 +111,7 @@ Start-Process 'C:\Program Files\Docker\Kitematic\Kitematic.exe'
 
 #endregion
 
-#region Docker Datacenter
-
+#region VSTS
 # View Azure Container solutions
 
 Start-Process 'https://portal.azure.com/?feature.customportal=false'
@@ -116,26 +120,6 @@ Start-Process 'https://portal.azure.com/?feature.customportal=false'
 Start-Process  'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList   'https://ddc-ctr.westeurope.cloudapp.azure.com'
 Start-Process  'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList   'https://ddc-dtr.westeurope.cloudapp.azure.com'
 
-# Configure client
-cd 'C:\Users\marrobi\OneDrive - Microsoft\Documents\DevOps\Docker\DDC UCP Bundle'
-.\env.ps1
-$env:DOCKER_API_VERSION=1.23
-
-# View Docker DC info
-docker  info
-
-# run container
-docker run -d -p 80:80  -e "constraint:node==ddc0-ucpnode"  nginx
-
-# view
-start-process "http://ddc-nlb.westeurope.cloudapp.azure.com/"
-
-# view in Docker DC
-start-process 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList  "https://ddc-ctr.westeurope.cloudapp.azure.com/#/containers"
-
-#endregion 
-
-#region VSTS
 
 #Edit, commit and push changes
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" "C:\Users\marrobi\Source\Repos\example-voting-app"
