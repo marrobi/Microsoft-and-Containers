@@ -66,7 +66,7 @@ docker build --tag 'windowswebsite' .
 Start-Process "http://$($ServerCoreIP):82"
 
 #start container based on new image on port 82
-docker run --name 'windowswebsite1' -d -p 50011:82 'windowswebsite'
+docker run --name 'windowswebsite2' -d -p 82:80 'windowswebsite'
 
 # view output
 Start-Process "http://$($ServerCoreIP):82"
