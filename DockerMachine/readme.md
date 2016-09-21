@@ -5,7 +5,6 @@ _Docker Machine_ facilitates the creation and management of virtual hosts runnin
 During this exercise we will provision a VM running Docker on Microsoft Azure and deploying containers to the VM. We will use the Azure driver for Docker Machine which is documented here [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
 
 # Install Prerequisites
-
 ## PowerShell
 
 If you haven't already got PowerShell installed on your system (potentially a you are using a none Windows OS) follow the instructions applicable for your operating system: [https://github.com/PowerShell/PowerShell](https://github.com/PowerShell/PowerShell)
@@ -22,7 +21,8 @@ If you haven't already got PowerShell installed on your system (potentially a yo
     ```
     Install-Module AzureRM -Force
     ```
-NOTE: If you get errors and are using PowerShell on Linux/Mac please check out the following article:
+    
+NOTE: If you have problems getting the above commands to work and are using a Linux/Mac OS please check out the following article:
 [https://blogs.technet.microsoft.com/jessicadeen/azure/getting-started-with-powershell-core-and-azurerm-modules-on-ubuntu-and-os-x/](https://blogs.technet.microsoft.com/jessicadeen/azure/getting-started-with-powershell-core-and-azurerm-modules-on-ubuntu-and-os-x/)
 
 ## Docker
@@ -103,12 +103,12 @@ Please follow any instructions output by the command that may be required to aut
 1. Run the following command to view the details required to connect Docker Machine to the VM:
  
     ```
-    docker-machine env$DockerMachineVMName
+    docker-machine env $DockerMachineVMName
     ```
 2. To connect Docker machine to the new VM:
 
     ```
-    docker-machine env$DockerMachineVMName | Invoke-Expression
+    docker-machine env $DockerMachineVMName | Invoke-Expression
     ```
 3. Verify connected to Docker Engine on the VM:
 
