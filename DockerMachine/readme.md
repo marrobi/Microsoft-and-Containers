@@ -8,11 +8,12 @@ During this exercise we will provision a VM running Docker on Microsoft Azure an
 
 ## PowerShell
 
-If you haven't already got PowerShell installed on your system (potentially a none Windows OS) follow the instructions applicable for your operating system: [https://github.com/PowerShell/PowerShell](https://github.com/PowerShell/PowerShell)
+If you haven't already got PowerShell installed on your system (potentially a you are using a none Windows OS) follow the instructions applicable for your operating system: [https://github.com/PowerShell/PowerShell](https://github.com/PowerShell/PowerShell)
 
 ## Azure PowerShell Module
 
 1. Open a PowerShell prompt by typing ```powershell``` at a command prompt/terminal:
+
     ```
     powershell
     ```
@@ -21,6 +22,8 @@ If you haven't already got PowerShell installed on your system (potentially a no
     ```
     Install-Module AzureRM -Force
     ```
+NOTE: If you get errors and are using PowerShell on Linux/Mac please check out the following article:
+[https://blogs.technet.microsoft.com/jessicadeen/azure/getting-started-with-powershell-core-and-azurerm-modules-on-ubuntu-and-os-x/](https://blogs.technet.microsoft.com/jessicadeen/azure/getting-started-with-powershell-core-and-azurerm-modules-on-ubuntu-and-os-x/)
 
 ## Docker
 
@@ -72,8 +75,7 @@ Requires individual installation of Docker components
 
 # Create a virtual machine on Azure running Docker Engine
 
-1. To configure variables required to provision the VM run the following lines with your preferred values.
-
+1. To configure variables required to provision the VM run the following lines with your preferred values. A list of current Microsoft Azure regions can eb found here: https://azure.microsoft.com/regions/
 
     ```
     $DockerMachineVMName = '<vm_name>'
@@ -82,24 +84,24 @@ Requires individual installation of Docker components
 
     $ResourceGroup = '<resource_group_name>'
     ```
-2. To create the VM, run the following command:
+    
+    
+2. To create the VM, run the following command. The parameters used  and additional parameters are documented here: [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
 
     ```
     docker-machine create --driver azure `
-
-        --azure-subscription-id $SubscriptionId `
-
-        --azure-location $Region `
-
-        --azure-resource-group  $ResourceGroup `
-
-        $DockerMachineVMName
+    --azure-subscription-id $SubscriptionId `
+    --azure-location $Region `
+    --azure-resource-group  $ResourceGroup `
+    --azure-image "canonical:UbuntuServer:16.04.0-LTS:latest"  `
+     $DockerMachineVMName
     ```
-Wait while the virtual machine is provisioned. This may take 5 minutes or more.
+Please follow any instructions output by the command that may be required to authenticate with Azure. Wait while the virtual machine is provisioned. This may take 5 minutes or more.
 
 # Connect to the VM
 
 1. Run the following command to view the details required to connect Docker Machine to the VM:
+ 
     ```
     docker-machine env$DockerMachineVMName
     ```
