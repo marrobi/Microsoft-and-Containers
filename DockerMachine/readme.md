@@ -12,7 +12,7 @@ If you haven't already got PowerShell installed on your system (potentially a no
 
 ## Azure PowerShell Module
 
-1. Open a PowerShell prompt by typing PowerShell at a command prompt/terminal:
+1. Open a PowerShell prompt by typing <code>powershell</code> at a command prompt/terminal:
 
 <code>
 powershell
@@ -54,12 +54,10 @@ Login-AzureRmAccount
 
 2. Retrieve your subscription ID:
     - If you only have one Azure subscription:
-
     <code>
 $SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
     </code>
-
-- If you have multiple Azure subscriptions
+    - If you have multiple Azure subscriptions
     1. View list of subscriptions find the name of the subscription you wish to use:
 
     <code>
