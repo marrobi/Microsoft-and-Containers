@@ -12,12 +12,15 @@ If you haven't already got PowerShell installed on your system (potentially a no
 
 ## Azure PowerShell Module
 
-1. Open a PowerShell prompt
+1. Open a PowerShell prompt by typing PowerShell at a command prompt/terminal:
+```
+powershell
+```
 
 2. Run the command:
 
 ```
-Install-ModuleAzureRM-Force
+Install-Module AzureRM -Force
 ```
 ## Docker
 
