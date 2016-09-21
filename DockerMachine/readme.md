@@ -3,7 +3,7 @@ _Docker Machine_ facilitates the creation and management of hosts running Docker
 
 During this post we will provision a VM running Docker on Microsoft Azure using the Azure driver for Docker Machine which is documented here: [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
 
-NOTE: The following process uses PowerShell which is currently in preview on Linux and Mac OS. I have tested the steps on Ubuntu 16.04 but as cross platform PowerShell support . The Azure CLI can be used as an alternative to PowerShell on none Windows platforms.
+NOTE: The following process uses PowerShell which is currently in preview on Linux and Mac. I have tested the steps on Ubuntu 16.04 but as cross platform PowerShell support . The Azure CLI can be used as an alternative to PowerShell on none Windows platforms.
 
 # Install Prerequisites
 ## PowerShell
