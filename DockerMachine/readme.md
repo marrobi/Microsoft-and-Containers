@@ -19,9 +19,10 @@ powershell
 
 2. Run the command:
 
-```
+<code>
 Install-Module AzureRM -Force
-```
+</code>
+
 ## Docker
 
 ### Docker for Windows/Mac
