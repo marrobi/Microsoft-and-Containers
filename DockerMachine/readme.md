@@ -1,7 +1,9 @@
 # Using Docker Machine to provision a VM running Docker on Azure
-_Docker Machine_ facilitates the creation and management of virtual hosts running Docker engine [https://docs.docker.com/machine/overview/](https://docs.docker.com/machine/overview/) . This could be a host running within a VM on your local machine, via technologies such as Hyper-V or in a public cloud such as Microsoft Azure. Docker Machine uses _drivers_ to enable deployment to different platforms.
+_Docker Machine_ facilitates the creation and management of hosts running Docker engine [https://docs.docker.com/machine/overview/](https://docs.docker.com/machine/overview/) . This could be a host running within a VM on your local machine, via technologies such as Hyper-V or in a public cloud such as Microsoft Azure. Docker Machine uses _drivers_ to enable deployment to different platforms.
 
 During this post we will provision a VM running Docker on Microsoft Azure using the Azure driver for Docker Machine which is documented here: [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
+
+NOTE: The following process uses PowerShell which is currently in preview on Linux and Mac OS. I have tested the steps on Ubuntu 16.04 but as cross platform PowerShell support . The Azure CLI can be used as an alternative to PowerShell on none Windows platforms.
 
 # Install Prerequisites
 ## PowerShell
