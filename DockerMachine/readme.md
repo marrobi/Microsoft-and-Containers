@@ -13,9 +13,10 @@ If you haven't already got PowerShell installed on your system (potentially a no
 ## Azure PowerShell Module
 
 1. Open a PowerShell prompt by typing PowerShell at a command prompt/terminal:
-```
+
+<code>
 powershell
-```
+</code>
 
 2. Run the command:
 
@@ -46,39 +47,46 @@ Requires individual installation of Docker components
 # Retrieve your Azure Subscription ID
 
 1. Log in to Azure:
-```
+
+<code>
 Login-AzureRmAccount
-```
+</code>
+
 2. Retrieve your subscription ID:
     - If you only have one Azure subscription:
-    ```
-    $SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
-    ```
+
+    <code>
+$SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
+    </code>
 
 - If you have multiple Azure subscriptions
     1. View list of subscriptions find the name of the subscription you wish to use:
-    ```
+
+    <code>
     Get-AzureRmSubscription
-    ```
+    </code>
+
     2. Replace <your_subscription_name> with the name of the subscription:
-    ```
+    
+    <code>
     $SubscriptionId= (Get-AzureRmSubscription-SubscriptionName '<your_subscription_name>').SubscriptionId
-    ```
+    </code>
 
 
 # Create a virtual machine on Azure running Docker Engine
 
 1. To configure variables required to provision the VM run the following lines with your preferred values. 
 
-```
+<code>
 $DockerMachineVMName = '<vm_name>'
 
 $Region = '<azure_region>'
 
 $ResourceGroup = '<resource_group_name>'
-```
+</code>
 2. To create the VM, run the following command: explain about parameters
-```
+
+<code>
 docker-machine create --driver azure `
 
     --azure-subscription-id$SubscriptionId `
@@ -88,22 +96,25 @@ docker-machine create --driver azure `
     --azure-resource-group  $ResourceGroup `
 
     $DockerMachineVMName
-```
+</code>
 Wait while the virtual machine is provisioned. This may take 5 minutes or more.
 
 # Connect to the VM
 
 1. Run the following command to view the details required to connect Docker Machine to the VM:
-```
+
+<code>
 docker-machine env$DockerMachineVMName
-```
+</code>
 2. To connect Docker  machine
-```
+
+<code>
 docker-machine env$DockerMachineVMName | Invoke-Expression
-```
+</code>
 3. Verify connected to Docker Engine on the VM:
-```
+
+<code>
 docker info
-```
+</code>
 
 Congratulations you are now connected to your new Docker VM!
