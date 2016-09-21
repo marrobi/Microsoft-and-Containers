@@ -47,15 +47,17 @@ Login-AzureRmAccount
 ```
 2. Retrieve your subscription ID:
     - If you only have one Azure subscription:
-```
-$SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
-```
-    - If you have multiple Azure subscriptions
+>```
+>$SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
+>```
+
+
+- If you have multiple Azure subscriptions
     1. View list of subscriptions:
-```
-Get-AzureRmSubscription
-```
-        - Replace <your_subscription_name> with the name of your Azure Subscription:
+>```
+>Get-AzureRmSubscription
+>```
+        2. Replace <your_subscription_name> with the name of your Azure Subscription:
 
 ```
 $SubscriptionId= (Get-AzureRmSubscription-SubscriptionName <your_subscription_name>).SubscriptionId
