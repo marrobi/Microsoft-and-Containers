@@ -47,36 +47,35 @@ Login-AzureRmAccount
 ```
 2. Retrieve your subscription ID:
     - If you only have one Azure subscription:
->```
->$SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
->```
-
+    ```
+    $SubscriptionId = (Get-AzureRmSubscription).SubscriptionId
+    ```
 
 - If you have multiple Azure subscriptions
-    1. View list of subscriptions:
->```
->Get-AzureRmSubscription
->```
-        2. Replace <your_subscription_name> with the name of your Azure Subscription:
-
-```
-$SubscriptionId= (Get-AzureRmSubscription-SubscriptionName <your_subscription_name>).SubscriptionId
-```
+    1. View list of subscriptions find the name of the subscription you wish to use:
+    ```
+    Get-AzureRmSubscription
+    ```
+    2. Replace <your_subscription_name> with the name of the subscription:
+    ```
+    $SubscriptionId= (Get-AzureRmSubscription-SubscriptionName '<your_subscription_name>').SubscriptionId
+    ```
 
 
 # Create a virtual machine on Azure running Docker Engine
 
-1. To configure variables required to provision the VM run the following lines with your preferred values. Maybe split
-```
-$DockerMachineVMName=&quot;&lt;vm\_name&gt;&quot;
+1. To configure variables required to provision the VM run the following lines with your preferred values. 
 
-$Region=&quot;&lt;azure\_region&gt;&quot;
+```
+$DockerMachineVMName = '<vm_name>'
 
-$ResourceGroup=&quot;&lt;resource\_group\_name&gt;&quot;
+$Region = '<azure_region>'
+
+$ResourceGroup = '<resource_group_name>'
 ```
-1. To create the VM, run the following command: explain about parameters
+2. To create the VM, run the following command: explain about parameters
 ```
-docker-machinecreate--driverazure `
+docker-machine create --driver azure `
 
     --azure-subscription-id$SubscriptionId `
 
@@ -84,9 +83,7 @@ docker-machinecreate--driverazure `
 
     --azure-resource-group  $ResourceGroup `
 
-    --azure-image&quot;canonical:UbuntuServer:16.04.0-LTS:latest&quot;  `
-
-     $DockerMachineVMName
+    $DockerMachineVMName
 ```
 Wait while the virtual machine is provisioned. This may take 5 minutes or more.
 
@@ -94,15 +91,15 @@ Wait while the virtual machine is provisioned. This may take 5 minutes or more.
 
 1. Run the following command to view the details required to connect Docker Machine to the VM:
 ```
-docker-machineenv$DockerMachineVMName
+docker-machine env$DockerMachineVMName
 ```
-1. To connect Docker  machine
+2. To connect Docker  machine
 ```
-docker-machineenv$DockerMachineVMName|Invoke-Expression
+docker-machine env$DockerMachineVMName | Invoke-Expression
 ```
-1. 3.Verify connected to Docker Engine on the VM:
+3. Verify connected to Docker Engine on the VM:
 ```
-dockerinfo
+docker info
 ```
 
-Congratulations you are now connected to your new Docker VM.
+Congratulations you are now connected to your new Docker VM!
