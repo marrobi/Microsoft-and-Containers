@@ -72,7 +72,8 @@ Requires individual installation of Docker components
 
 # Create a virtual machine on Azure running Docker Engine
 
-1. To configure variables required to provision the VM run the following lines with your preferred values. 
+1. To configure variables required to provision the VM run the following lines with your preferred values.
+
 
     ```
     $DockerMachineVMName = '<vm_name>'
@@ -81,13 +82,14 @@ Requires individual installation of Docker components
 
     $ResourceGroup = '<resource_group_name>'
     ```
-2. To create the VM, run the following command: explain about parameters
+2. To create the VM, run the following command:
+
     ```
     docker-machine create --driver azure `
 
-        --azure-subscription-id$SubscriptionId `
+        --azure-subscription-id $SubscriptionId `
 
-        --azure-location$Region `
+        --azure-location $Region `
 
         --azure-resource-group  $ResourceGroup `
 
@@ -101,11 +103,13 @@ Wait while the virtual machine is provisioned. This may take 5 minutes or more.
     ```
     docker-machine env$DockerMachineVMName
     ```
-2. To connect Docker  machine
+2. To connect Docker machine to the new VM:
+
     ```
     docker-machine env$DockerMachineVMName | Invoke-Expression
     ```
 3. Verify connected to Docker Engine on the VM:
+
     ```
     docker info
     ```
