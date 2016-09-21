@@ -3,6 +3,8 @@ _Docker Machine_ facilitates the creation and management of hosts running Docker
 
 During this post we will provision a VM running Docker on Microsoft Azure using the Azure driver for Docker Machine which is documented here: [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
 
+The PowerShell in this post are all included in the file [DockerMachineSteps.ps1](DockerMachineSteps.ps1) to reduce the need to copy/paste commands.
+
 NOTE: The following process uses PowerShell which is currently in preview on Linux and Mac. I have tested the steps on Ubuntu 16.04 but as cross platform PowerShell support . The Azure CLI can be used as an alternative to PowerShell on none Windows platforms.
 
 # Install Prerequisites
@@ -41,10 +43,6 @@ Requires individual installation of Docker components
 
 - Docker Engine: [https://docs.docker.com/engine/installation/](https://docs.docker.com/engine/installation/)
 - Docker Machine: [https://docs.docker.com/machine/install-machine/](https://docs.docker.com/machine/install-machine/)
-
-## Visual Studio Code
-
-- [https://code.visualstudio.com/](https://code.visualstudio.com/)
 
 # Retrieve your Azure Subscription ID
 
