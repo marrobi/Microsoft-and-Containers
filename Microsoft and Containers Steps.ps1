@@ -42,7 +42,7 @@ docker images
 Start-Process 'https://hub.docker.com/search/?isAutomated=0&isOfficial=0&page=1&pullCount=0&q=iis&starCount=0'
 
 # How built
-cd "CoreIIS"
+cd ServerCoreIIS"
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" .
 # Already built this using: docker build --tag 'coreiis' .
 

@@ -2,7 +2,7 @@
 
 _Docker Machine_ facilitates the creation and management of virtual hosts running Docker engine [https://docs.docker.com/machine/overview/](https://docs.docker.com/machine/overview/) . This could be a host running within a VM on your local machine, via technologies such as Hyper-V or in a public cloud such as Microsoft Azure. Docker Machine uses _drivers_ to enable deployment to different platforms
 
-During this exercise we will provision a VM running Docker on Microsoft Azure and deploying containers to the VM. We will use the Azure driver for Docker Machine which is documented here [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
+During this post we will provision a VM running Docker on Microsoft Azure and deploying containers to the VM. We will use the Azure driver for Docker Machine which is documented here [https://docs.docker.com/machine/drivers/azure/](https://docs.docker.com/machine/drivers/azure/) .
 
 # Install Prerequisites
 ## PowerShell
