@@ -12,7 +12,6 @@ During this post we will provision a VM running Docker on Microsoft Azure using 
 The PowerShell in this post are all included in the file [DockerMachineSteps.ps1](DockerMachineSteps.ps1) to reduce the need to copy/paste commands.
 
 NOTE: The following process uses PowerShell which is currently in preview on Linux and Mac. I have tested the steps on Ubuntu 16.04 but as cross platform PowerShell support . The Azure CLI can be used as an alternative to PowerShell on none Windows platforms.
->>>>>>> master
 
 # Install Prerequisites
 ## PowerShell
@@ -57,7 +56,7 @@ Requires individual installation of Docker components
 - [https://code.visualstudio.com/](https://code.visualstudio.com/)
 
 =======
->>>>>>> master
+
 # Retrieve your Azure Subscription ID
 
 1. Log in to Azure:
