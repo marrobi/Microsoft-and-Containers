@@ -27,8 +27,10 @@ During this post we will create an extremely simple image using Windows Server C
 6. Verify that the content of your docker file looks like:
 
     <code>
-    FROM microsoft/windowsservercore:latest<br />
-    RUN powershell -Command Add-WindowsFeature Web-Server<br />
+    FROM microsoft/windowsservercore:latest
+    
+    RUN powershell -Command Add-WindowsFeature Web-Server
+    
     CMD ["powershell"]
     </code>
     
