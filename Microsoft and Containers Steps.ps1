@@ -23,7 +23,7 @@ Get-Container  | Remove-Container -Force
 # check UCP status
 start-process 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList  "https://ddc-ctr.westeurope.cloudapp.azure.com/#/applications"
 
-
+docker pull microsoft/windowsserver
 #endregion 
 
 #region Windows Containers
@@ -42,7 +42,7 @@ docker images
 Start-Process 'https://hub.docker.com/search/?isAutomated=0&isOfficial=0&page=1&pullCount=0&q=iis&starCount=0'
 
 # How built
-cd "CoreIIS"
+cd "ServerCoreIIS"
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" .
 # Already built this using: docker build --tag 'coreiis' .
 
@@ -50,10 +50,10 @@ cd "CoreIIS"
 Start-Process "http://$($ServerCoreIP):81"
 
 # run container based on that image
-docker run --name 'coreiis1' -d -p 81:80 'coreiis'
+docker run --name 'coreiis1' -d -p 86:80 'coreiis'
 
 # view web output
-Start-Process "http://$($ServerCoreIP):81"
+Start-Process "http://$($ServerCoreIP):86"
 
 # change to website demo
 cd "..\CoreWindowsWebsite"
@@ -63,13 +63,13 @@ cd "..\CoreWindowsWebsite"
 docker build --tag 'windowswebsite' .
 
 # view nothign on port 81
-Start-Process "http://$($ServerCoreIP):82"
+Start-Process "http://$($ServerCoreIP):87"
 
 #start container based on new image on port 82
-docker run --name 'windowswebsite2' -d -p 82:80 'windowswebsite'
+docker run --name 'windowswebsite1' -d -p 87:80 'windowswebsite'
 
 # view output
-Start-Process "http://$($ServerCoreIP):82"
+Start-Process "http://$($ServerCoreIP):87"
 
 # view all containers
 docker ps -a
@@ -81,7 +81,7 @@ Get-Container | Remove-Container -Force
 Get-Container
 
 # Proof gone!
-Start-Process "http://$($ServerCoreIP):82"
+Start-Process "http://$($ServerCoreIP):87"
 
 #endregion
 

@@ -1,9 +1,9 @@
 FROM coreiis:latest
 
-ADD WinVMConfiguration.ps1 /
+ADD WindowsWebsite.zip /
 
 SHELL ["powershell","-command"]
-RUN . .\WinVMConfiguration.ps1; WinVMConfiguration
-RUN Start-DSCConfiguration -Path "c:\\WinVMConfiguration\\" -Force -Wait
+
+RUN Expand-Archive -Path WindowsWebsite.zip  -DestinationPath c:\inetpub\wwwroot -Force
 
 CMD powershell 
