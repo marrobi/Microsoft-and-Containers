@@ -28,9 +28,9 @@ During this post we will create an extremely simple image using Windows Server C
 
     <code>
     FROM microsoft/windowsservercore:latest
-    
+     
     RUN powershell -Command Add-WindowsFeature Web-Server
-    
+     
     CMD ["powershell"]
     </code>
     
