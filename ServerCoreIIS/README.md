@@ -26,11 +26,11 @@ During this post we will create an extremely simple image using Windows Server C
 
 6. Verify that the content of your docker file looks like:
 
-    <code>FROM microsoft/windowsservercore:latest
-    
-    RUN powershell -Command Add-WindowsFeature Web-Server
-    
-    CMD ["powershell"]</code>
+    <code>
+    FROM microsoft/windowsservercore:latest<br />
+    RUN powershell -Command Add-WindowsFeature Web-Server<br />
+    CMD ["powershell"]
+    </code>
     
     The Dockerfile could include many more ```RUN``` commands to add additional features and carry out further configuration.
 
@@ -53,6 +53,6 @@ This creates an image tagged (a name/alias) with ```servercoreiis```. You will s
     
 2. Open a web browser with the IP address of the server core instance directed to port 50001.
 
-    <code>http://<server_ip_address>:50001</code>
+    <code>http://&lt;server_ip_address&gt;50001</code>
 
     You should now be able to see IIS running. Move onto the next post that will provide steps for deploying your website to a container.
