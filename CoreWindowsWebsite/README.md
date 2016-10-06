@@ -65,16 +65,16 @@ During this post we will add a website to the image running IIS.
 This creates an image tagged (a name/alias) with ```corewindowswebsite```. You will see the image get built one layer at a time, this will take a few minutes. Ensure you include the ```.``` at the end that specifies the location of the docker file, i.e. the current directory.
 
 ## Create a container using the image
-1. To start a new container based on the image created earlier run the following command:
+1. To start a new container based on the image run the following command:
 
     <code>
     docker run --name 'windowswebsite1' -d -p 50002:80 'corewindowswebsite'
     </code>
     
-    The ```--name``` parameter specified the name of the new container, ```-d``` means the container is detached, i.e. runs in the background rather than interactively, ```-p 50001:80``` maps port 50001 on the host network to port 80 on the container.
+    The ```--name``` parameter specified the name of the new container, ```-d``` means the container is detached, i.e. runs in the background rather than interactively, ```-p 50002:80``` maps port 50002 on the host network to port 80 on the container.
     
 2. Open a web browser with the IP address of the server core instance directed to port 50001.
 
     <code>http://&lt;server_ip_address&gt;50002</code>
 
-    You should now be able to see IIS running. Move onto the next post that will provide steps for deploying your website to a container.
+    You should now be able to see the website running.
