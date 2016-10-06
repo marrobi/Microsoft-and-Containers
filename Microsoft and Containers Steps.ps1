@@ -15,7 +15,14 @@ $ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name 2016-TP5-CORE-ip -ResourceGro
 
  $env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"
 Get-Container  | Remove-Container -Force
-Get-ContainerImage | Where-Object { $_.RepoTags -notlike '*microsoft/windowsservercore*' -notlike '*coreiis*'}  | Remove-ContainerImage
+Get-ContainerImage | Where-Object { $_.RepoTags -notlike '*microsoft/windowsservercore*' -notlike '*servercoreiis*'}  | Remove-ContainerImage
+
+set-item WSMan:\localhost\Client\TrustedHosts  $ServerCoreIP -Force
+
+Invoke-Command -ComputerName $ServerCoreIP -ScriptBlock {
+Get-NetNatStaticMapping | Remove-NetNatStaticMapping 
+Restart-Computer -Force
+} -Credential adminmarcus
 
 $env:DOCKER_HOST = "npipe://./pipe/docker_engine"
 Get-Container  | Remove-Container -Force
@@ -23,7 +30,6 @@ Get-Container  | Remove-Container -Force
 # check UCP status
 start-process 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList  "https://ddc-ctr.westeurope.cloudapp.azure.com/#/applications"
 
-docker pull microsoft/windowsserver
 #endregion 
 
 #region Windows Containers
@@ -34,7 +40,7 @@ $env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"
 # Show details of Docker engine connected to
 docker info
 
-# Show images, should just be core base image and coreiis
+# Show images, should just be core base image and servercoreiis
 docker images
 
 
@@ -47,13 +53,13 @@ cd "ServerCoreIIS"
 # Already built this using: docker build --tag 'coreiis' .
 
 #Nothing running on port 80...
-Start-Process "http://$($ServerCoreIP):81"
+Start-Process "http://$($ServerCoreIP):80"
 
 # run container based on that image
-docker run --name 'coreiis1' -d -p 86:80 'coreiis'
+docker run --name 'coreiis1' -d -p 80:80 'servercoreiis'
 
 # view web output
-Start-Process "http://$($ServerCoreIP):86"
+Start-Process "http://$($ServerCoreIP):80"
 
 # change to website demo
 cd "..\CoreWindowsWebsite"
@@ -63,13 +69,13 @@ cd "..\CoreWindowsWebsite"
 docker build --tag 'windowswebsite' .
 
 # view nothign on port 81
-Start-Process "http://$($ServerCoreIP):87"
+Start-Process "http://$($ServerCoreIP):81"
 
 #start container based on new image on port 82
-docker run --name 'windowswebsite1' -d -p 87:80 'windowswebsite'
+docker run --name 'windowswebsite1' -d -p 81:80 'windowswebsite'
 
 # view output
-Start-Process "http://$($ServerCoreIP):87"
+Start-Process "http://$($ServerCoreIP):81"
 
 # view all containers
 docker ps -a
@@ -81,33 +87,7 @@ Get-Container | Remove-Container -Force
 Get-Container
 
 # Proof gone!
-Start-Process "http://$($ServerCoreIP):87"
-
-#endregion
-
-#region Docker for Windows
-# HAVE A LOOK at Hyper-V and GUI
-
-# connect to Docker for Windows - as I was connected to server core in Azure
-$env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
-
-# now connected to Linux OS
-docker info
-
-# Show Docker Hub
-Start-Process 'https://hub.docker.com/search/?isAutomated=0&isOfficial=0&page=1&pullCount=0&q=nginx&starCount=0'
-
-# show nothing on port 50001
-Start-Process 'http://localhost:50001'
-
-# Start instance of nginx
-docker run -d -p 50001:80  --name 'nginx1'  nginx
-
-# view running
-Start-Process 'http://localhost:50001'
-
-# show kitematic
-Start-Process 'C:\Program Files\Docker\Kitematic\Kitematic.exe'
+Start-Process "http://$($ServerCoreIP):81"
 
 #endregion
 

@@ -1,4 +1,4 @@
-FROM coreiis:latest
+FROM servercoreiis:latest
 
 ADD WindowsWebsite.zip /
 
