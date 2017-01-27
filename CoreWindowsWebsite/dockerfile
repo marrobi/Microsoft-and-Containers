@@ -5,5 +5,3 @@ ADD WindowsWebsite.zip /
 SHELL ["powershell","-command"]
 
 RUN Expand-Archive -Path WindowsWebsite.zip  -DestinationPath c:\inetpub\wwwroot -Force
-
-CMD powershell 

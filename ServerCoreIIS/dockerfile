@@ -1,5 +1,11 @@
 FROM microsoft/windowsservercore:latest
 
-RUN powershell -Command Add-WindowsFeature Web-Server
+SHELL ["powershell","-command"]
 
-CMD ["powershell"]
+ADD Wait-Service.ps1 /Wait-Service.ps1
+
+RUN Add-WindowsFeature Web-Server
+
+SHELL ["powershell","-file"]
+
+CMD c:\Wait-Service.ps1 -ServiceName W3SVC -AllowServiceRestart

@@ -3,13 +3,12 @@
 Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName "74824f88-020e-446b-ba3e-35f75f376987" )
 Select-AzureRmSubscription  -SubscriptionName "Demos"
 
-Get-AzureRmResourceGroup -Name  DevOpsDemo-DockerDC  | Get-AzureRmVM | Start-AzureRMVM 
 Start-AzureRMVM -Name VSTSBuildLinux -ResourceGroupName "DevEnvironment-VSTSBuildLinux-788587"  
-Start-AzureRMVM -Name 2016-TP5-CORE -ResourceGroupName "DevOpsDemo-ContainerHosts"  
+Start-AzureRMVM -Name 2016-Containers  -ResourceGroupName "DevOpsDemo-ContainerHosts"  
 
-$SessionDir = "C:\Users\marrobi\Source\Repos\Microsoft-and-Containers"
+$SessionDir = "C:\Repos\Microsoft-and-Containers"
 cd $SessionDir 
-$ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name 2016-TP5-CORE-ip -ResourceGroupName DevOpsDemo-ContainerHosts).IpAddress
+$ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name 2016-Containers-IP -ResourceGroupName DevOpsDemo-ContainerHosts).IpAddress
 
 #cleanup previous demo
 
@@ -19,13 +18,14 @@ Get-ContainerImage | Where-Object { $_.RepoTags -notlike '*microsoft/windowsserv
 
 set-item WSMan:\localhost\Client\TrustedHosts  $ServerCoreIP -Force
 
-Invoke-Command -ComputerName $ServerCoreIP -ScriptBlock {
-Get-NetNatStaticMapping | Remove-NetNatStaticMapping 
-Restart-Computer -Force
-} -Credential adminmarcus
+#Invoke-Command -ComputerName $ServerCoreIP -ScriptBlock {
+#Get-NetNatStaticMapping | Remove-NetNatStaticMapping 
+#Restart-Computer -Force
+#} -Credential adminmarcus
 
-$env:DOCKER_HOST = "npipe://./pipe/docker_engine"
+$env:DOCKER_HOST = $env:DOCKER_HOST = "tcp://127.0.0.1:2375"
 Get-Container  | Remove-Container -Force
+Get-ContainerImage | Where-Object { $_.RepoTags -like '*linuxwebsite*'}  | Remove-ContainerImage  -Force
 
 # check UCP status
 start-process 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList  "https://ddc-ctr.westeurope.cloudapp.azure.com/#/applications"
@@ -50,13 +50,13 @@ Start-Process 'https://hub.docker.com/search/?isAutomated=0&isOfficial=0&page=1&
 # How built
 cd "ServerCoreIIS"
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" .
-# Already built this using: docker build --tag 'coreiis' .
+# Already built this using: docker build --tag 'servercoreiis' .
 
 #Nothing running on port 80...
 Start-Process "http://$($ServerCoreIP):80"
 
 # run container based on that image
-docker run --name 'coreiis1' -d -p 80:80 'servercoreiis'
+docker run --name 'servercoreiis1' -d -p 80:80 'servercoreiis'
 
 # view web output
 Start-Process "http://$($ServerCoreIP):80"
@@ -72,7 +72,7 @@ docker build --tag 'windowswebsite' .
 Start-Process "http://$($ServerCoreIP):81"
 
 #start container based on new image on port 82
-docker run --name 'windowswebsite1' -d -p 81:80 'windowswebsite'
+docker run  -d -p 81:80 'windowswebsite'
 
 # view output
 Start-Process "http://$($ServerCoreIP):81"
@@ -88,6 +88,56 @@ Get-Container
 
 # Proof gone!
 Start-Process "http://$($ServerCoreIP):81"
+
+#endregion
+
+
+
+#region Linux App Service
+# Run in BASH for Windows!!
+
+Start-Process bash
+#Connect to docker for windows
+export DOCKER_HOST=tcp://0.0.0.0:2375
+
+# change to Windows file system source lcoation
+cd /mnt/c/Repos/Microsoft-and-Containers/LinuxWebsite
+
+# build continer
+docker build --tag 'linuxwebsite' . 
+
+# run container
+docker run -d -p 80:80 linuxwebsite
+
+# check all works
+Start-Process "http://localhost"
+
+# login to Azure Container Registry
+docker login -u '74824f88-020e-446b-ba3e-35f75f376987' containerregistry-microsoft.azurecr.io
+
+# Tag image with registry
+docker tag  'linuxwebsite' 'containerregistry-microsoft.azurecr.io/linuxwebsite:latest'
+
+# Push image
+docker push 'containerregistry-microsoft.azurecr.io/linuxwebsite:latest'
+
+# create webapp
+
+# image: containerregistry-microsoft.azurecr.io/linuxwebsite:latest
+# regsitry url:  https://containerregistry-microsoft.azurecr.io
+# username: "74824f88-020e-446b-ba3e-35f75f376987"
+
+
+#endregion
+
+#region Azure Container Service
+
+az login
+az account set --subscription "Demos"
+
+az group create -n "tmpACSCluster" -l "westeurope"
+
+az acs create -n "acs-cluster" -g "tmpACSCluster" -d "tmpmarcusacs" --orchestrator-type "Swarm"  --master-count 1 --agent-count 1 --generate-ssh-keys
 
 #endregion
 
