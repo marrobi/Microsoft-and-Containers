@@ -6,6 +6,17 @@ Select-AzureRmSubscription  -SubscriptionName "Demos"
 Start-AzureRMVM -Name VSTSBuildLinux -ResourceGroupName "DevEnvironment-VSTSBuildLinux-788587"  
 Start-AzureRMVM -Name 2016-Containers  -ResourceGroupName "DevOpsDemo-ContainerHosts"  
 
+# start ACS
+
+Get-AzureRmVM  -ResourceGroupName DevOpsDemo-ACSSwarm | Start-AzureRMVM 
+
+
+foreach ($vmss in Get-AzureRmVmss  -ResourceGroupName DevOpsDemo-ACSSwarm )
+{
+    Start-AzureRmVmss  -ResourceGroupName DevOpsDemo-ACSSwarm -VMScaleSetName $vmss.Name
+}
+ 
+
 $SessionDir = "C:\Repos\Microsoft-and-Containers"
 cd $SessionDir 
 $ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name 2016-Containers-IP -ResourceGroupName DevOpsDemo-ContainerHosts).IpAddress
