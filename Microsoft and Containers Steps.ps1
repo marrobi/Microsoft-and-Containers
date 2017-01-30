@@ -34,12 +34,14 @@ set-item WSMan:\localhost\Client\TrustedHosts  $ServerCoreIP -Force
 #Restart-Computer -Force
 #} -Credential adminmarcus
 
-$env:DOCKER_HOST = $env:DOCKER_HOST = "tcp://127.0.0.1:2375"
+$env:DOCKER_HOST = "tcp://127.0.0.1:2375"
 Get-Container  | Remove-Container -Force
 Get-ContainerImage | Where-Object { $_.RepoTags -like '*linuxwebsite*'}  | Remove-ContainerImage  -Force
 
-# check UCP status
-start-process 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList  "https://ddc-ctr.westeurope.cloudapp.azure.com/#/applications"
+# clean up ACS
+$env:DOCKER_HOST = "tcp://marcusacsswarmmgmt.westeurope.cloudapp.azure.com:2375"
+Get-Container  | Remove-Container -Force
+
 
 #endregion 
 
@@ -111,6 +113,7 @@ Start-Process bash
 #Connect to docker for windows
 export DOCKER_HOST=tcp://0.0.0.0:2375
 
+
 # change to Windows file system source lcoation
 cd /mnt/c/Repos/Microsoft-and-Containers/LinuxWebsite
 
@@ -157,11 +160,6 @@ az acs create -n "acs-cluster" -g "tmpACSCluster" -d "tmpmarcusacs" --orchestrat
 
 Start-Process 'https://portal.azure.com/?feature.customportal=false'
 
-# Docker datacenter
-Start-Process  'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList   'https://ddc-ctr.westeurope.cloudapp.azure.com'
-Start-Process  'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList   'https://ddc-dtr.westeurope.cloudapp.azure.com'
-
-
 #Edit, commit and push changes
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" "C:\Users\marrobi\Source\Repos\example-voting-app"
 
@@ -171,11 +169,8 @@ Start-Process 'https://github.com/marrobi/example-voting-app/'
 #View build and release on VSTS
 Start-Process 'https://marrobi.visualstudio.com/Docker%20Example%20Voting%20App/'
 
-# View in UCP
-Start-Process  'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList   'https://ddc-ctr.westeurope.cloudapp.azure.com/#/applications'
-
 # View App
-start-process "http://ddc-nlb.westeurope.cloudapp.azure.com:5000/"
-start-process "http://ddc-nlb.westeurope.cloudapp.azure.com:5001/"
+start-process "http://marcusacsswarmagents.westeurope.cloudapp.azure.com:5000/"
+start-process "http://marcusacsswarmagents.westeurope.cloudapp.azure.com:5001/"
 
 #endregion
