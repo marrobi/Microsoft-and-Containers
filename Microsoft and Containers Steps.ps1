@@ -121,8 +121,8 @@ cd /mnt/c/Repos/Microsoft-and-Containers/LinuxWebsite
 docker build --tag 'linuxwebsite' . 
 
 # run container
-docker run -d -p 80:80 linuxwebsite
 
+docker run -d -p 80:80 linuxwebsite
 # check all works
 Start-Process "http://localhost"
 
@@ -151,7 +151,7 @@ az account set --subscription "Demos"
 
 az group create -n "tmpACSCluster" -l "westeurope"
 
-az acs create -n "acs-cluster" -g "tmpACSCluster" -d "tmpmarcusacs" --orchestrator-type "Swarm"  --master-count 1 --agent-count 1 --generate-ssh-keys
+az acs create -n "acs-cluster" -g "tmpACSCluster" -d "tmpmarcusacs" --orchestrator-type "Kubernetes"  --master-count 1 --agent-count 3 --generate-ssh-keys
 
 #endregion
 
