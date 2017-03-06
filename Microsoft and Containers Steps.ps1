@@ -161,7 +161,7 @@ az acs create -n "acs-cluster" -g "tmpACSCluster" -d "tmpmarcusacs" --orchestrat
 Start-Process 'https://portal.azure.com/?feature.customportal=false'
 
 #Edit, commit and push changes
-& "C:\Program Files (x86)\Microsoft VS Code\Code.exe" "C:\Users\marrobi\Source\Repos\example-voting-app"
+& "C:\Program Files (x86)\Microsoft VS Code\Code.exe" "C:\Repos\example-voting-app\"
 
 # View changes on GitHub and view service arch.
 Start-Process 'https://github.com/marrobi/example-voting-app/'
