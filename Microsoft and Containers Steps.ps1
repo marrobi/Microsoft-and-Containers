@@ -1,13 +1,12 @@
 ﻿#region Prep
 
-Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName "74824f88-020e-446b-ba3e-35f75f376987" )
+Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47"  -Credential (Get-Credential -Message "Password" -UserName "ce72d709-728d-45f7-ab6e-cd8e1c432b4d" )
 Select-AzureRmSubscription  -SubscriptionName "Demos"
 
-Start-AzureRMVM -Name VSTSBuildLinux -ResourceGroupName "DevEnvironment-VSTSBuildLinux-788587"  
-Start-AzureRMVM -Name 2016-Containers  -ResourceGroupName "DevOpsDemo-ContainerHosts"  
-
+#Start-AzureRMVM -Name VSTSBuildLinux -ResourceGroupName "DevEnvironment-VSTSBuildLinux-788587"  
+Start-AzureRMVM -Name containerhost  -ResourceGroupName "DevOpsDemo-ContainerHost"  
+# DevOpsDemo-ContainerHost-
 # start ACS
-
 Get-AzureRmVM  -ResourceGroupName DevOpsDemo-ACSSwarm | Start-AzureRMVM 
 
 
@@ -19,7 +18,7 @@ foreach ($vmss in Get-AzureRmVmss  -ResourceGroupName DevOpsDemo-ACSSwarm )
 
 $SessionDir = "C:\Repos\Microsoft-and-Containers"
 cd $SessionDir 
-$ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name 2016-Containers-IP -ResourceGroupName DevOpsDemo-ContainerHosts).IpAddress
+$ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name ContainerHost-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
 
 #cleanup previous demo
 
@@ -27,21 +26,20 @@ $ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name 2016-Containers-IP -ResourceG
 Get-Container  | Remove-Container -Force
 Get-ContainerImage | Where-Object { $_.RepoTags -notlike '*microsoft/windowsservercore*' -notlike '*servercoreiis*'}  | Remove-ContainerImage
 
-set-item WSMan:\localhost\Client\TrustedHosts  $ServerCoreIP -Force
+#set-item WSMan:\localhost\Client\TrustedHosts  $ServerCoreIP -Force
 
-#Invoke-Command -ComputerName $ServerCoreIP -ScriptBlock {
-#Get-NetNatStaticMapping | Remove-NetNatStaticMapping 
-#Restart-Computer -Force
-#} -Credential adminmarcus
 
 $env:DOCKER_HOST = "tcp://127.0.0.1:2375"
 Get-Container  | Remove-Container -Force
 Get-ContainerImage | Where-Object { $_.RepoTags -like '*linuxwebsite*'}  | Remove-ContainerImage  -Force
 
 # clean up ACS
-$env:DOCKER_HOST = "tcp://marcusacsswarmmgmt.westeurope.cloudapp.azure.com:2375"
-Get-Container  | Remove-Container -Force
+#$env:DOCKER_HOST = "tcp://marcusacsswarmmgmt.westeurope.cloudapp.azure.com:2375"
+#Get-Container  | Remove-Container -Force
 
+# check ACS
+$env:DOCKER_HOST = "tcp://marcusacsswarmmgmt.westeurope.cloudapp.azure.com:2375"
+docker info
 
 #endregion 
 
@@ -84,7 +82,7 @@ docker build --tag 'windowswebsite' .
 # view nothign on port 81
 Start-Process "http://$($ServerCoreIP):81"
 
-#start container based on new image on port 82
+#start container based on new image on port 81
 docker run  -d -p 81:80 'windowswebsite'
 
 # view output
@@ -104,18 +102,21 @@ Start-Process "http://$($ServerCoreIP):81"
 
 #endregion
 
-
-
 #region Linux App Service
 # Run in BASH for Windows!!
 
-Start-Process bash
-#Connect to docker for windows
-export DOCKER_HOST=tcp://0.0.0.0:2375
+# change to website demo
+cd "..\LinuxWebsite"
+& "C:\Program Files (x86)\Microsoft VS Code\Code.exe" "Linux WebApps DemoSteps.sh"
 
 
 # change to Windows file system source lcoation
 cd /mnt/c/Repos/Microsoft-and-Containers/LinuxWebsite
+
+
+#Connect to docker for windows
+export DOCKER_HOST=tcp://0.0.0.0:2375
+
 
 # build continer
 docker build --tag 'linuxwebsite' . 
@@ -127,7 +128,7 @@ docker run -d -p 80:80 linuxwebsite
 Start-Process "http://localhost"
 
 # login to Azure Container Registry
-docker login -u '74824f88-020e-446b-ba3e-35f75f376987' containerregistry-microsoft.azurecr.io
+docker login -u 'ce72d709-728d-45f7-ab6e-cd8e1c432b4d' containerregistry-microsoft.azurecr.io
 
 # Tag image with registry
 docker tag  'linuxwebsite' 'containerregistry-microsoft.azurecr.io/linuxwebsite:latest'
@@ -139,7 +140,7 @@ docker push 'containerregistry-microsoft.azurecr.io/linuxwebsite:latest'
 
 # image: containerregistry-microsoft.azurecr.io/linuxwebsite:latest
 # regsitry url:  https://containerregistry-microsoft.azurecr.io
-# username: "74824f88-020e-446b-ba3e-35f75f376987"
+# username: "ce72d709-728d-45f7-ab6e-cd8e1c432b4d"
 
 
 #endregion
@@ -158,7 +159,9 @@ az acs create -n "acs-cluster" -g "tmpACSCluster" -d "tmpmarcusacs" --orchestrat
 #region VSTS
 # View Azure Container solutions
 
-Start-Process 'https://portal.azure.com/?feature.customportal=false'
+# View App
+start-process "http://marcusacsswarmagents.westeurope.cloudapp.azure.com:5000/"
+start-process "http://marcusacsswarmagents.westeurope.cloudapp.azure.com:5001/"
 
 #Edit, commit and push changes
 & "C:\Program Files (x86)\Microsoft VS Code\Code.exe" "C:\Repos\example-voting-app\"

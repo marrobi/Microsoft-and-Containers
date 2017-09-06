@@ -1,0 +1,34 @@
+  {
+    "job_specifications": [
+      {
+        "id": "marcusshipyardjob",
+        "data_volumes": [
+          "ephemeraldisk"
+        ],
+        "tasks": [
+          {
+            "image": "marrobi/batchdemo:latest",
+            "remove_container_after_exit": true,
+            "task_factory": {
+              "file": {
+                "azure_storage": {
+                  "storage_account_settings": "mystorageaccount",
+                  "file_share": "sourceimages"
+                  },
+                "task_filepath": "file_path"
+              }
+            },
+            "output_data": {
+              "azure_storage":[
+                { 
+                  "storage_account_settings": "mystorageaccount",
+                  "file_share": "output"
+                }
+              ]
+            },              
+            "command": "{file_path} /tmp/twitterhandle.png  {file_name_no_extension}-overlay.jpg"
+          }
+        ]
+      }
+    ]
+  }

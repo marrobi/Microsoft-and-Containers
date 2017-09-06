@@ -2,6 +2,8 @@ FROM servercoreiis:latest
 
 ADD WindowsWebsite.zip /
 
-SHELL ["powershell","-command"]
+SHELL ["powershell"]
 
 RUN Expand-Archive -Path WindowsWebsite.zip  -DestinationPath c:\inetpub\wwwroot -Force
+
+EXPOSE 80

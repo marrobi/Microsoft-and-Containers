@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: linuxwebsite-aci
+  namespace: default
+  labels:
+    application: linuxwebsite
+spec:
+  containers:
+  - image: marcusreg.azurecr.io/linuxwebsite
+    imagePullPolicy: Always
+    name: linuxwebsite
+  imagePullSecrets:
+  - name:  "azure-registry"
+  dnsPolicy: ClusterFirst
+  nodeName: aci-connector

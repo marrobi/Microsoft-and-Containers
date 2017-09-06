@@ -1,7 +1,9 @@
 # Microsoft-and-Containers
-Slides and demo scripts from my session on Microsoft and Containers.
+Slides and demo scripts from my sessions on Microsoft and Containers.
 
-Please note this content will always be work in progress and demo content is to enable principles to be shown and is defintiely not production ready! 
+Demo steps for my two sessions are in ```Microsoft and Containers Steps.ps1``` and ```BYOC.ps1```
+
+Please note this content will always be work in progress and demo content is to enable principles to be shown and is definitely not production ready! 
 
 # Technical Prerequisites:
 -   VS Code: https://code.visualstudio.com/

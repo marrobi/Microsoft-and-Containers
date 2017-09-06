@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aci-connector
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aci-connector
+    spec:
+      containers:
+      - name: aci-connector
+        image: microsoft/aci-connector-k8s:latest
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_CLIENT_ID
+          value: ce72d709-728d-45f7-ab6e-cd8e1c432b4d
+        - name: AZURE_CLIENT_KEY
+          value: $AZURE_CLIENT_KEY
+        - name: AZURE_TENANT_ID
+          value: 72f988bf-86f1-41af-91ab-2d7cd011db47
+        - name: AZURE_SUBSCRIPTION_ID
+          value: 802df257-6032-4b50-884c-55cb9f074928
+        - name:  ACI_REGION
+          value: westeurope
+        - name: ACI_RESOURCE_GROUP
+          value: Demo-k8s
