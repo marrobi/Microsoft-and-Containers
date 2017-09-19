@@ -1,65 +1,85 @@
 ﻿#region Prep
-Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47"  -Credential (Get-Credential -Message "Password" -UserName "ce72d709-728d-45f7-ab6e-cd8e1c432b4d" )
 
-Select-AzureRmSubscription  -SubscriptionName "Demos"
+    # Start VMs, login to services
+    Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47"  -Credential (Get-Credential -Message "Password" -UserName "ce72d709-728d-45f7-ab6e-cd8e1c432b4d" )
 
-Start-AzureRMVM -Name containerhost  -ResourceGroupName "DevOpsDemo-ContainerHost"  
-Get-AzureRMVM -ResourceGroupName Demo-k8s | Start-AzureRMVM
+    Select-AzureRmSubscription  -SubscriptionName "Demos"
+
+    Get-AzureRMVM -ResourceGroupName "DevOpsDemo-ContainerHost" | Start-AzureRMVM   
+    Get-AzureRMVM -ResourceGroupName Demo-k8s | Start-AzureRMVM
+
+    # Move to demo dir and get IPs
+    $SessionDir = "C:\Repos\Microsoft-and-Containers"
+    Set-Location $SessionDir 
+    $ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name ContainerHost-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
+    $UbuntuIP =  (Get-AzureRmPublicIpAddress -Name dockerubuntu-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
+
+    # BASH
+    # new terminal
+
+    bash
+    az account list 
+
+    # az login
 
 
-# move to dir and get IP
-$SessionDir = "C:\Repos\Microsoft-and-Containers"
-Set-Location $SessionDir 
-$ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name ContainerHost-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
+    cd /mnt/c/Repos/batch-shipyard
+    source ./shipyard.venv/bin/activate
 
-$UbuntuIP =  (Get-AzureRmPublicIpAddress -Name dockerubuntu-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
+    ./shipyard.py jobs del  --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json 
+    
+    ./shipyard.py pool add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard --credentials credentials.json 
+    exit
 
-Start-Process "http://$($UbuntuIP):80"
+    bash.exe
 
-# BASH
-bash
-az login
-#ubuntuIP=$(az network public-ip show  --name dockerubuntu-ip --resource-group "DevOpsDemo-ContainerHost"  --query "{ address: ipAddress }" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
+    read -s AZURE_CLIENT_KEY
 
+    # check windows directories.
 
-#cleanup previous demo
+    # back to PowerShell
 
-$env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"
-Get-Container  | Remove-Container -Force
-Get-ContainerImage | Where-Object { $_.RepoTags -notlike '*microsoft/windowsservercore*' -notlike '*servercoreiis*'}  | Remove-ContainerImage
+    $env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"
+    docker rm -f $(docker ps -qa)
+    docker rmi 'marcusreg.azurecr.io/windowswebsite'
 
-$env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
-docker login marcusreg.azurecr.io
+    $env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
+    docker login marcusreg.azurecr.io
 
-docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
-docker push  marcusreg.azurecr.io/linuxwebsite:prod
+    docker pull marcusreg.azurecr.io/linuxwebsite
+    docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
+    docker push  marcusreg.azurecr.io/linuxwebsite:prod
 
-Get-Container  | Remove-Container -Force
-Get-ContainerImage | Where-Object { $_.RepoTags -like '*website'  }  | Remove-ContainerImage  -Force
+    docker rm -f $(docker ps -qa)
+    docker rmi 'marcusreg.azurecr.io/linuxwebsite:prod'
 
 
 #endregion
 
 
-#region build
+#region Build & Ship
 
 # Windows
-docker build --tag 'marcusreg.azurecr.io/windowswebsite' .\CoreWindowsWebsite
+
+    $env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"
+
+    docker build --tag 'marcusreg.azurecr.io/windowswebsite' .\CoreWindowsWebsite
+
+    #docker login marcusreg.azurecr.io
+
+    docker push 'marcusreg.azurecr.io/windowswebsite'
 
 # Linux
 
-docker build --tag 'marcusreg.azurecr.io/linuxwebsite' .\LinuxWebsite
+    $env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
 
-#endregion
+    docker build --tag 'marcusreg.azurecr.io/linuxwebsite' .\LinuxWebsite
 
-#region ship
-docker login marcusreg.azurecr.io
+    #docker login marcusreg.azurecr.io
 
-# Windows
-docker push 'marcusreg.azurecr.io/windowswebsite'
+    docker push 'marcusreg.azurecr.io/linuxwebsite'
 
-# Linux
-docker push 'marcusreg.azurecr.io/linuxwebsite'
+
 
 #endregion
 
@@ -89,12 +109,12 @@ docker push 'marcusreg.azurecr.io/linuxwebsite'
 
 #region ACI
 
-# bash
+# BASH
 
-# az group create -n 'tmpACIDemo' -l westeurope
+ az group create -n 'tmpACIDemo' -l westeurope
 
 # Windows
-# az container create --name 'windows-website-demo' --image 'marrrobi/windowswebsite' --os-type Windows --cpu 2 --memory 3.5 --registry-login-server 'marcusreg.azurecr.io' --registry-username 'marcusreg' --registry-password 'N5/fv9qyfP2MZh9iDEvGc6sOG4tspr52' --ip-address public -g 'tmpACIDemo'
+#az container create --name 'windows-website-demo' --image 'marrobi/windowswebsite' --os-type Windows --cpu 1 --memory 1 --ip-address public -g 'tmpACIDemo'
 
 # az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query state
 
@@ -105,9 +125,13 @@ docker push 'marcusreg.azurecr.io/linuxwebsite'
 # az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
 
 # Linux
-# az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
+    az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
 
-# az container delete --name  'linux-website-demo' --resource-group 'tmpACIDemo' --yes
+    az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query state
+
+    az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
+
+    az container delete --name  'linux-website-demo' --resource-group 'tmpACIDemo' --yes
 
 # troubleshooting
 
@@ -120,33 +144,44 @@ docker push 'marcusreg.azurecr.io/linuxwebsite'
 
 #region ACS
 
-az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
+    az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
 
-az acs kubernetes browse --resource-group Demo-k8s --name=myK8SCluster 
+    kubectl proxy
 
-kubectl get nodes
+    kubectl get nodes
 
-kubectl create -f k8s/linuxwebsite-pod.yaml
+    kubectl create -f k8s/linuxwebsite-deployment.yaml
 
-kubectl get pod -w -o wide
+    kubectl create -f k8s/linuxwebsite-service.yaml
+
+    kubectl get deployment -o wide
+
+    kubectl get pod -o wide
+
+    kubectl get service -o wide
+
+    #cleanup 
+
+    kubectl delete deployment,service linuxwebsite
+    
 
 #endregion
 
 
 #region ACS + ACI
-read -s AZURE_CLIENT_KEY
 
-cat ./k8s/aci-connector.yaml | AZURE_CLIENT_KEY=$AZURE_CLIENT_KEY envsubst | kubectl create -f -
 
-kubectl get deploy -w
+    cat ./k8s/aci-connector.yaml | AZURE_CLIENT_KEY=$AZURE_CLIENT_KEY envsubst | kubectl create -f -
 
-kubectl get nodes
+    kubectl get deploy -w
 
-kubectl create -f k8s/linuxwebsite-pod-aci.yaml
+    kubectl get nodes
 
-kubectl get pod -o wide
+    kubectl create -f k8s/linuxwebsite-pod-aci.yaml
 
-https://ms.portal.azure.com/
+    kubectl get pod -o wide
+
+    https://ms.portal.azure.com/
 
 #endregion
 
@@ -154,13 +189,14 @@ https://ms.portal.azure.com/
 #region ACS cleanup
     kubectl delete pod linuxwebsite
     kubectl delete pod linuxwebsite-aci
-    kubectl delete deploy aci-connector
-    kubectl delete node aci-connector
+      
+    kubectl delete deploy,node aci-connector
+  
 #endregion
 
 #region ACS troubleshooting
     # kubectl logs linuxwebsite
-    # az container logs --name 'linux-website-demo' --resource-group 'tmpACIDemo'
+    # az container logs --name 'linux-website-demo' --resource-group 'Demo-k8s'
     # kubectl logs deploy/aci-connector
     # kubectl describe node/aci-connector
 #endregion
@@ -173,34 +209,43 @@ https://ms.portal.azure.com/
     # az acs kubernetes install-cli 
 #endregion
 
-#region Azure Batch Shipyard
-
-source ~/batch-shipyard/venv/bin/activate
-cd ~/clouddrive/batch
-# shipyard pool add --config config.json --credentials credentials.json --pool pool.json
-
-~/batch-shipyard/shipyard.py pool add --config config.json --credentials credentials.json --pool pool.json
-~/batch-shipyard/shipyard.py jobs add --jobs jobs.json --credentials credentials.json  --config config.json  --pool pool.json
-
-~/batch-shipyard/shipyard.py jobs del  --jobs jobs.json --credentials credentials.json  --config config.json  --pool pool.json
-~/batch-shipyard/shipyard.py pool del --config config.json --credentials credentials.json --pool pool.json
-
 #region Linux WebApps
+# PowerShell
 
-$env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
+    $env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
 
 
-docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
+    docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
 
-docker push  marcusreg.azurecr.io/linuxwebsite:prod
+    docker push  marcusreg.azurecr.io/linuxwebsite:prod
 
 # Portal: Create Web App using :prod, view site, slots, scaling, enable continous delivery.
 
-docker build -t marcusreg.azurecr.io/linuxwebsite:v2 ./LinuxWebsite_v2 
+    Start-Process https://ms.portal.azure.com/
 
-docker tag marcusreg.azurecr.io/linuxwebsite:v2  marcusreg.azurecr.io/linuxwebsite:prod
+# docker build -t marcusreg.azurecr.io/linuxwebsite:v2 ./LinuxWebsite_v2 
 
-docker push  marcusreg.azurecr.io/linuxwebsite:prod
+# docker tag marcusreg.azurecr.io/linuxwebsite:v2  marcusreg.azurecr.io/linuxwebsite:prod
+
+# docker push  marcusreg.azurecr.io/linuxwebsite:prod
+
+#end region
+#region Azure Batch Shipyard
+# BASH
+    cd /mnt/c/Repos/batch-shipyard
+    source ./shipyard.venv/bin/activate
+
+# ./shipyard.py pool add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard --credentials credentials.json 
+
+    ./shipyard.py jobs add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json  
+
+    https://ms.portal.azure.com/
+
+#clean up
+#./shipyard.py jobs del  --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json 
+#./shipyard.py pool del --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json 
+
+exit
 
 
 
@@ -209,6 +254,6 @@ docker push  marcusreg.azurecr.io/linuxwebsite:prod
 
 #region bits and pieces
 
-kubectl create secret docker-registry azure-registry --docker-server=marcusreg.azurecr.io --docker-username=ce72d709-728d-45f7-ab6e-cd8e1c432b4d --docker-password=$AZURE_CLIENT_KEY --docker-email 'me@me.com'
+#kubectl create secret docker-registry azure-registry --docker-server=marcusreg.azurecr.io --docker-username=ce72d709-728d-45f7-ab6e-cd8e1c432b4d --docker-password=$AZURE_CLIENT_KEY --docker-email 'me@me.com'
 
 #end region

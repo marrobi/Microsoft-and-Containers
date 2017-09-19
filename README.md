@@ -1,16 +1,18 @@
-# Microsoft-and-Containers
-Slides and demo scripts from my sessions on Microsoft and Containers.
+# Microsoft and Containers Session Resources
+Slides and demo scripts from my sessions on "Microsoft and Containers" and "Bring your own container - Running Containers on Microsoft Azure".
 
 Demo steps for my two sessions are in ```Microsoft and Containers Steps.ps1``` and ```BYOC.ps1```
 
-Please note this content will always be work in progress and demo content is to enable principles to be shown and is definitely not production ready! 
+Please note this content will always be work in progress - it changes prior to each delivery - and demo content is to enable principles to be shown and is definitely not production ready!
 
 # Technical Prerequisites:
+The demos use the tools and products below:
 -   VS Code: https://code.visualstudio.com/
 -   Docker for Windows: https://docs.docker.com/docker-for-windows/
 -   PowerShell for Docker: https://github.com/Microsoft/Docker-PowerShell/ 
--   Windows Server 2016 TP5 with Containers: https://azure.microsoft.com/en-us/marketplace/partners/microsoft/windowsserver2016withcontainerstechpreview5-arm/
--   Docker Datacenter: https://azure.microsoft.com/en-us/marketplace/partners/microsoft/windowsserver2016withcontainerstechpreview5-arm/
+-   Windows Server 2016
+-   An Azure subscription
+
 
 #Step by Step Guides
 - Using Docker Machine to provision a VM running Docker on Azure: https://github.com/marrobi/Microsoft-and-Containers/blob/master/DockerMachine/readme.md

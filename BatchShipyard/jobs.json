@@ -2,8 +2,8 @@
     "job_specifications": [
       {
         "id": "marcusshipyardjob",
-        "data_volumes": [
-          "ephemeraldisk"
+        "shared_data_volumes": [
+          "azurefiles_output"
         ],
         "tasks": [
           {
@@ -17,16 +17,9 @@
                   },
                 "task_filepath": "file_path"
               }
-            },
-            "output_data": {
-              "azure_storage":[
-                { 
-                  "storage_account_settings": "mystorageaccount",
-                  "file_share": "output"
-                }
-              ]
-            },              
-            "command": "{file_path} /tmp/twitterhandle.png  {file_name_no_extension}-overlay.jpg"
+            },            
+
+            "command": "{file_path} /tmp/twitterhandle.png  $AZ_BATCH_NODE_SHARED_DIR/output/{file_name_no_extension}-overlay.jpg"
           }
         ]
       }
