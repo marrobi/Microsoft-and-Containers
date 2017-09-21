@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: windowswebsite
+  namespace: default
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: windowswebsite
+    spec:      
+      containers:
+        - name: windowswebsite
+          image: marcusreg.azurecr.io/windowswebsite
+          #image: marrobi/windowswebsite
+          ports:
+          - containerPort: 80
+          imagePullPolicy: Always  
+      imagePullSecrets:
+      - name:  "azure-registry"

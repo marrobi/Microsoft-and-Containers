@@ -1,63 +1,4 @@
-﻿#region Prep
-
-    # Start VMs, login to services
-    Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47"  -Credential (Get-Credential -Message "Password" -UserName "ce72d709-728d-45f7-ab6e-cd8e1c432b4d" )
-
-    Select-AzureRmSubscription  -SubscriptionName "Demos"
-
-    Get-AzureRMVM -ResourceGroupName "DevOpsDemo-ContainerHost" | Start-AzureRMVM   
-    Get-AzureRMVM -ResourceGroupName Demo-k8s | Start-AzureRMVM
-
-    # Move to demo dir and get IPs
-    $SessionDir = "C:\Repos\Microsoft-and-Containers"
-    Set-Location $SessionDir 
-    $ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name ContainerHost-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
-    $UbuntuIP =  (Get-AzureRmPublicIpAddress -Name dockerubuntu-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
-
-    # BASH
-    # new terminal
-
-    bash
-    az account list 
-
-    # az login
-
-
-    cd /mnt/c/Repos/batch-shipyard
-    source ./shipyard.venv/bin/activate
-
-    ./shipyard.py jobs del  --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json 
-    
-    ./shipyard.py pool add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard --credentials credentials.json 
-    exit
-
-    bash.exe
-
-    read -s AZURE_CLIENT_KEY
-
-    # check windows directories.
-
-    # back to PowerShell
-
-    $env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"
-    docker rm -f $(docker ps -qa)
-    docker rmi 'marcusreg.azurecr.io/windowswebsite'
-
-    $env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
-    docker login marcusreg.azurecr.io
-
-    docker pull marcusreg.azurecr.io/linuxwebsite
-    docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
-    docker push  marcusreg.azurecr.io/linuxwebsite:prod
-
-    docker rm -f $(docker ps -qa)
-    docker rmi 'marcusreg.azurecr.io/linuxwebsite:prod'
-
-
-#endregion
-
-
-#region Build & Ship
+﻿#region Build & Ship
 
 # Windows
 
@@ -114,15 +55,15 @@
  az group create -n 'tmpACIDemo' -l westeurope
 
 # Windows
-#az container create --name 'windows-website-demo' --image 'marrobi/windowswebsite' --os-type Windows --cpu 1 --memory 1 --ip-address public -g 'tmpACIDemo'
+    az container create --name 'windows-website-demo' --image 'marrobi/windowswebsite' --os-type Windows --cpu 1 --memory 1 --ip-address public -g 'tmpACIDemo'
 
-# az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query state
+    az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query state
 
-# az container logs --name 'windows-website-demo' --resource-group 'tmpACIDemo'
+    az container logs --name 'windows-website-demo' --resource-group 'tmpACIDemo'
 
-# az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
+    az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
 
-# az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
+    az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
 
 # Linux
     az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
@@ -143,26 +84,41 @@
 
 
 #region ACS
+    # Linux
 
-    az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
+        az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
 
-    kubectl proxy
+        kubectl proxy
 
-    kubectl get nodes
+        kubectl get nodes
 
-    kubectl create -f k8s/linuxwebsite-deployment.yaml
+        kubectl create -f k8s/linuxwebsite-deployment.yaml
 
-    kubectl create -f k8s/linuxwebsite-service.yaml
+        kubectl create -f k8s/linuxwebsite-service.yaml
 
-    kubectl get deployment -o wide
+        kubectl get deployment -o wide
 
-    kubectl get pod -o wide
+        kubectl get pod -o wide
 
-    kubectl get service -o wide
+        kubectl get service -o wide
 
-    #cleanup 
-
-    kubectl delete deployment,service linuxwebsite
+       
+    # windows
+        az acs kubernetes get-credentials --resource-group=Demo-k8s-win  --name=mK8sWinCluster
+    
+        kubectl proxy
+    
+        kubectl get nodes
+    
+        kubectl create -f k8s/windowswebsite-deployment.yaml
+    
+        kubectl create -f k8s/windowswebsite-service.yaml
+    
+        kubectl get deployment -o wide
+    
+        kubectl get pod -o wide
+    
+        kubectl get service -o wide
     
 
 #endregion
@@ -170,6 +126,10 @@
 
 #region ACS + ACI
 
+
+    az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
+
+    kubectl get nodes
 
     cat ./k8s/aci-connector.yaml | AZURE_CLIENT_KEY=$AZURE_CLIENT_KEY envsubst | kubectl create -f -
 
@@ -183,18 +143,7 @@
 
     https://ms.portal.azure.com/
 
-#endregion
-
-
-#region ACS cleanup
-    kubectl delete pod linuxwebsite
-    kubectl delete pod linuxwebsite-aci
-      
-    kubectl delete deploy,node aci-connector
-  
-#endregion
-
-#region ACS troubleshooting
+# ACS troubleshooting
     # kubectl logs linuxwebsite
     # az container logs --name 'linux-website-demo' --resource-group 'Demo-k8s'
     # kubectl logs deploy/aci-connector
@@ -206,28 +155,47 @@
 
     # az acs create --orchestrator-type=kubernetes --resource-group=Demo-k8s  --name=myK8SCluster --generate-ssh-keys --agent-count 1
 
+    # az group create --name=Demo-k8s-Win --location=westeurope
+
+    # az acs create --orchestrator-type=kubernetes --resource-group=Demo-k8s-Win  --name=mK8sWinCluster --generate-ssh-keys --agent-count 1  --windows  --admin-password Password1docker
+
     # az acs kubernetes install-cli 
 #endregion
 
+#region Service Fabric
+
+Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com:19080/Explorer/index.html"
+
+Connect-ServiceFabricCluster -ConnectionEndpoint 'demo-sf-win.westeurope.cloudapp.azure.com:19000'
+
+New-ServiceFabricComposeApplication -ApplicationName fabric:/WindowsWebsite -Compose .\Compose\docker-compose.yml -RegistryUserName $SPNUsername -RegistryPassword $SPNPassword 
+
+Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com:19080/Explorer/index.html"
+
+
+Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com"
+
+Remove-ServiceFabricComposeApplication  -ApplicationName fabric:/WindowsWebsite
+
+#endregion
 #region Linux WebApps
 # PowerShell
+
+    # Edit V2 Site.
 
     $env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
 
 
-    docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
+    docker build -t marcusreg.azurecr.io/linuxwebsite:v2 ./LinuxWebsite_v2 
+
+    docker tag marcusreg.azurecr.io/linuxwebsite:v2  marcusreg.azurecr.io/linuxwebsite:prod
 
     docker push  marcusreg.azurecr.io/linuxwebsite:prod
+
 
 # Portal: Create Web App using :prod, view site, slots, scaling, enable continous delivery.
 
     Start-Process https://ms.portal.azure.com/
-
-# docker build -t marcusreg.azurecr.io/linuxwebsite:v2 ./LinuxWebsite_v2 
-
-# docker tag marcusreg.azurecr.io/linuxwebsite:v2  marcusreg.azurecr.io/linuxwebsite:prod
-
-# docker push  marcusreg.azurecr.io/linuxwebsite:prod
 
 #end region
 #region Azure Batch Shipyard
@@ -248,12 +216,5 @@
 exit
 
 
-
-
 #end region
 
-#region bits and pieces
-
-#kubectl create secret docker-registry azure-registry --docker-server=marcusreg.azurecr.io --docker-username=ce72d709-728d-45f7-ab6e-cd8e1c432b4d --docker-password=$AZURE_CLIENT_KEY --docker-email 'me@me.com'
-
-#end region

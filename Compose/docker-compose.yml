@@ -1,0 +1,8 @@
+version: '3'
+services:
+  web:
+    image: marcusreg.azurecr.io/windowswebsite:latest
+    ports:
+    - "80:80"
+    deploy:
+      replicas: 5
