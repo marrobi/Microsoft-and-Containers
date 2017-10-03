@@ -1,12 +1,12 @@
 {  
     "pool_specification":{  
        "id":"demopool",
-       "vm_size":"STANDARD_D1_V2",
+       "vm_size":"STANDARD_D2_V2",
        "vm_count":{  
           "dedicated":8,
           "low_priority":0
        },
-       "max_tasks_per_node": 2,
+       "max_tasks_per_node": 1,
        "vm_configuration":{  
           "platform_image":{  
              "publisher":"Canonical",

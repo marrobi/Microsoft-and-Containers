@@ -1,21 +1,21 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: windowswebsite
+  name: linuxwebsite
   namespace: default
 spec:
   replicas: 1 
   template:
     metadata:
       labels:
-        app: windowswebsite
+        app: linuxwebsite
     spec:      
       containers:
-        - name: windowswebsite
-          #image: marcusreg.azurecr.io/windowswebsite
-          image: marrobi/windowswebsite
+        - name: linuxwebsite
+          image: marcusreg.azurecr.io/linuxwebsite
           ports:
           - containerPort: 80
           imagePullPolicy: Always  
-     # imagePullSecrets:
-      #- name:  "azure-registry"
+      imagePullSecrets:
+      - name:  "azure-registry"
+      nodeName: aci-connector

@@ -7,7 +7,8 @@
 
     $SPNPassword = [System.Runtime.InteropServices.Marshal]::ptrToStringAuto([System.Runtime.InteropServices.Marshal]::SecurestringToBstr((Get-Credential -Message "Password" -UserName $SPNUsername ).Password))
 
-    Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName $SPNUsername )
+    Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName $SPNUsername )B@11Green
+    
     
         Select-AzureRmSubscription  -SubscriptionName "Demos"
     
@@ -15,7 +16,8 @@
         Get-AzureRMVM -ResourceGroupName Demo-k8s | Start-AzureRMVM
         Get-AzureRMVM -ResourceGroupName Demo-k8s-win | Start-AzureRMVM
         Get-AzureRMVMSS -ResourceGroupName Demo-SFWinContainers | Start-AzureRMVMSS
-    
+        Get-AzureRMVM -ResourceGroupName Demo-k8shybrid | Start-AzureRMVM
+        
         # Move to demo dir and get IPs
         $SessionDir = "C:\Repos\Microsoft-and-Containers"
         Set-Location $SessionDir 
@@ -43,6 +45,7 @@
         bash
     
         read -s AZURE_CLIENT_KEY
+        echo $AZURE_CLIENT_KEY
 
         az acs kubernetes get-credentials --resource-group=Demo-k8s-win  --name=mK8sWinCluster   
         kubectl get nodes
@@ -54,6 +57,7 @@
         kubectl delete pod linuxwebsite-aci
         kubectl delete deploy,node aci-connector
 
+        
         clear
          
         # back to PowerShell

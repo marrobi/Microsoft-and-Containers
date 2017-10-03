@@ -48,43 +48,43 @@
 
 
 
-#region ACI
+#region ACI (bash)
 
-# BASH
+    az group create -n 'tmpACIDemo' -l westeurope
 
- az group create -n 'tmpACIDemo' -l westeurope
+    #region Windows
+        az container create --name 'windows-website-demo' --image 'marrobi/windowswebsite' --os-type Windows --cpu 1 --memory 1 --ip-address public -g 'tmpACIDemo'
 
-# Windows
-    az container create --name 'windows-website-demo' --image 'marrobi/windowswebsite' --os-type Windows --cpu 1 --memory 1 --ip-address public -g 'tmpACIDemo'
+        az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query state
 
-    az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query state
+        az container logs --name 'windows-website-demo' --resource-group 'tmpACIDemo'
 
-    az container logs --name 'windows-website-demo' --resource-group 'tmpACIDemo'
+        az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
 
-    az container show --name 'windows-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
+        az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
+    #endregion
 
-    az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
+    #region Linux
+        az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
 
-# Linux
-    az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
+        az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query state
 
-    az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query state
+        az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
 
-    az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
+        az container delete --name  'linux-website-demo' --resource-group 'tmpACIDemo' --yes
+    #endregion
 
-    az container delete --name  'linux-website-demo' --resource-group 'tmpACIDemo' --yes
+    #region troubleshooting
 
-# troubleshooting
+     az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' 
 
-    # az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' 
-
-    # az container logs --name 'linux-website-demo' --resource-group 'tmpACIDemo'
-
-#end region
+     az container logs --name 'linux-website-demo' --resource-group 'tmpACIDemo'
+    #endregion
+#endregion
 
 
 #region ACS
-    # Linux
+    #region Linux
 
         az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
 
@@ -101,16 +101,15 @@
         kubectl get pod -o wide
 
         kubectl get service -o wide
-
-       
-    # windows
-        az acs kubernetes get-credentials --resource-group=Demo-k8s-win  --name=mK8sWinCluster
+    #endregion
+    #region windows
+       az acs kubernetes get-credentials --resource-group=Demo-k8s-win  --name=mK8sWinCluster
     
         kubectl proxy
     
-        kubectl get nodes
+      kubectl get nodes
     
-        kubectl create -f k8s/windowswebsite-deployment.yaml
+       kubectl create -f k8s/windowswebsite-deployment.yaml
     
         kubectl create -f k8s/windowswebsite-service.yaml
     
@@ -121,6 +120,7 @@
         kubectl get service -o wide
     
 
+    #endregion
 #endregion
 
 
@@ -137,13 +137,13 @@
 
     kubectl get nodes
 
-    kubectl create -f k8s/linuxwebsite-pod-aci.yaml
+    kubectl create -f k8s/linuxwebsite-deployment-aci.yaml
 
     kubectl get pod -o wide
 
     https://ms.portal.azure.com/
 
-# ACS troubleshooting
+#region ACS troubleshooting
     # kubectl logs linuxwebsite
     # az container logs --name 'linux-website-demo' --resource-group 'Demo-k8s'
     # kubectl logs deploy/aci-connector
@@ -178,6 +178,7 @@ Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com"
 Remove-ServiceFabricComposeApplication  -ApplicationName fabric:/WindowsWebsite
 
 #endregion
+
 #region Linux WebApps
 # PowerShell
 
@@ -205,7 +206,7 @@ Remove-ServiceFabricComposeApplication  -ApplicationName fabric:/WindowsWebsite
 
 # ./shipyard.py pool add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard --credentials credentials.json 
 
-    ./shipyard.py jobs add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json  
+    ./shipyard.py jobs add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json  -v 
 
     https://ms.portal.azure.com/
 
