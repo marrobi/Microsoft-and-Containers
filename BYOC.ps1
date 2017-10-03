@@ -63,7 +63,6 @@
 
         az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
     #endregion
-
     #region Linux
         az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
 
@@ -73,7 +72,6 @@
 
         az container delete --name  'linux-website-demo' --resource-group 'tmpACIDemo' --yes
     #endregion
-
     #region troubleshooting
 
      az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' 
@@ -83,7 +81,7 @@
 #endregion
 
 
-#region ACS
+#region ACS (bash)
     #region Linux
 
         az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
@@ -142,6 +140,7 @@
     kubectl get pod -o wide
 
     https://ms.portal.azure.com/
+#endregion
 
 #region ACS troubleshooting
     # kubectl logs linuxwebsite
