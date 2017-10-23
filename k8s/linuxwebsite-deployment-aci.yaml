@@ -1,14 +1,14 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: linuxwebsite
+  name: linuxwebsite-aci
   namespace: default
 spec:
   replicas: 1 
   template:
     metadata:
       labels:
-        app: linuxwebsite
+        app: linuxwebsite-aci
     spec:      
       containers:
         - name: linuxwebsite

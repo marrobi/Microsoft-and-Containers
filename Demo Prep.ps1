@@ -7,7 +7,7 @@
 
     $SPNPassword = [System.Runtime.InteropServices.Marshal]::ptrToStringAuto([System.Runtime.InteropServices.Marshal]::SecurestringToBstr((Get-Credential -Message "Password" -UserName $SPNUsername ).Password))
 
-    Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName $SPNUsername )B@11Green
+    Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName $SPNUsername )
     
     
         Select-AzureRmSubscription  -SubscriptionName "Demos"
@@ -32,13 +32,15 @@
     
         # az login
     
+    ## cloud shell
     
-        cd /mnt/c/Repos/batch-shipyard
-        source ./shipyard.venv/bin/activate
+        cd ./batch-shipyard/
+        source ./venv/bin/activate
     
-        ./shipyard.py jobs del  --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json 
+    
+        ./shipyard.py jobs del  --configdir ~/clouddrive/batch 
         
-        ./shipyard.py pool add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard --credentials credentials.json 
+        ./shipyard.py pool add --configdir ~/clouddrive/batch 
 
         exit
     
@@ -47,16 +49,16 @@
         read -s AZURE_CLIENT_KEY
         echo $AZURE_CLIENT_KEY
 
-        az acs kubernetes get-credentials --resource-group=Demo-k8s-win  --name=mK8sWinCluster   
-        kubectl get nodes
-        kubectl delete deployment,service windowswebsite
+     #   az acs kubernetes get-credentials --resource-group=Demo-k8s-win  --name=mK8sWinCluster   
+      #  kubectl get nodes
+       # kubectl delete deployment,service windowswebsite
       
         az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
         kubectl get nodes
         kubectl delete deployment,service linuxwebsite
-        kubectl delete pod linuxwebsite-aci
+        kubectl delete deploy,pod linuxwebsite-aci
         kubectl delete deploy,node aci-connector
-
+        
         
         clear
          

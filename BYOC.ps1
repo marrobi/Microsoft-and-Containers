@@ -64,8 +64,9 @@
         az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
     #endregion
     #region Linux
-        az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public -g 'tmpACIDemo'
+        az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public --port 80 --port 8080 -g 'tmpACIDemo'
 
+        
         az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query state
 
         az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query ipAddress.ip
@@ -83,6 +84,10 @@
 
 #region ACS (bash)
     #region Linux
+
+        # az group create --name=Demo-k8s --location=westeurope
+
+        # az acs create --orchestrator-type=kubernetes --resource-group=Demo-k8s  --name=myK8SCluster --generate-ssh-keys --agent-count 1
 
         az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
 
@@ -139,6 +144,15 @@
 
     kubectl get pod -o wide
 
+    kubectl scale --replicas 10 deployment/linuxwebsite-aci
+
+    kubectl get pod -o wide
+
+    # cleanup
+    kubectl delete deploy,pod linuxwebsite-aci
+
+    ./k8s/del.sh
+
     https://ms.portal.azure.com/
 #endregion
 
@@ -147,6 +161,8 @@
     # az container logs --name 'linux-website-demo' --resource-group 'Demo-k8s'
     # kubectl logs deploy/aci-connector
     # kubectl describe node/aci-connector
+
+    
 #endregion
 #region ACS Povisioning
 
@@ -163,18 +179,18 @@
 
 #region Service Fabric
 
-Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com:19080/Explorer/index.html"
+    Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com:19080/Explorer/index.html"
 
-Connect-ServiceFabricCluster -ConnectionEndpoint 'demo-sf-win.westeurope.cloudapp.azure.com:19000'
+    Connect-ServiceFabricCluster -ConnectionEndpoint 'demo-sf-win.westeurope.cloudapp.azure.com:19000'
 
-New-ServiceFabricComposeApplication -ApplicationName fabric:/WindowsWebsite -Compose .\Compose\docker-compose.yml -RegistryUserName $SPNUsername -RegistryPassword $SPNPassword 
+    New-ServiceFabricComposeApplication -ApplicationName fabric:/WindowsWebsite -Compose .\Compose\docker-compose.yml -RegistryUserName $SPNUsername -RegistryPassword $SPNPassword 
 
-Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com:19080/Explorer/index.html"
+    Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com:19080/Explorer/index.html"
 
 
-Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com"
+    Start-Process "http://demo-sf-win.westeurope.cloudapp.azure.com"
 
-Remove-ServiceFabricComposeApplication  -ApplicationName fabric:/WindowsWebsite
+    Remove-ServiceFabricComposeApplication  -ApplicationName fabric:/WindowsWebsite
 
 #endregion
 
@@ -199,13 +215,13 @@ Remove-ServiceFabricComposeApplication  -ApplicationName fabric:/WindowsWebsite
 
 #end region
 #region Azure Batch Shipyard
-# BASH
-    cd /mnt/c/Repos/batch-shipyard
-    source ./shipyard.venv/bin/activate
+# Cloud Shell
+    cd ./batch-shipyard/
+    source ./venv/bin/activate
 
 # ./shipyard.py pool add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard --credentials credentials.json 
 
-    ./shipyard.py jobs add --configdir /mnt/c/Repos/Microsoft-and-Containers/BatchShipyard  --credentials credentials.json  -v 
+    ./shipyard.py jobs add --configdir ~/clouddrive/batch 
 
     https://ms.portal.azure.com/
 
