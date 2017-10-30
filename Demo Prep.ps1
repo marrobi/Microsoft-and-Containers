@@ -57,7 +57,7 @@
       #  kubectl get nodes
        # kubectl delete deployment,service windowswebsite
       
-       az aks kubernetes get-credentials --resource-group=Demo-AKS-1 --name=aks1
+       az aks  get-credentials --resource-group=Demo-AKS-1 --name=aks1
        kubectl get nodes
         kubectl delete deployment,service linuxwebsite
         kubectl delete deploy,pod linuxwebsite-aci
