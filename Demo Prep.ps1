@@ -8,15 +8,19 @@
     $SPNPassword = [System.Runtime.InteropServices.Marshal]::ptrToStringAuto([System.Runtime.InteropServices.Marshal]::SecurestringToBstr((Get-Credential -Message "Password" -UserName $SPNUsername ).Password))
 
     Login-AzureRmAccount -ServicePrincipal -Tenant  "72f988bf-86f1-41af-91ab-2d7cd011db47" -Credential (Get-Credential -Message "Password" -UserName $SPNUsername )
-    
+
+    docker login marcusreg.azurecr.io
+        
     
         Select-AzureRmSubscription  -SubscriptionName "Demos"
     
         Get-AzureRMVM -ResourceGroupName "DevOpsDemo-ContainerHost" | Start-AzureRMVM   
         Get-AzureRMVM -ResourceGroupName Demo-k8s | Start-AzureRMVM
-        Get-AzureRMVM -ResourceGroupName Demo-k8s-win | Start-AzureRMVM
+   #     Get-AzureRMVM -ResourceGroupName Demo-k8s-win | Start-AzureRMVM
+        Get-AzureRMVM -ResourceGroupName MC_Demo-AKS-1_aks1_ukwest | Start-AzureRMVM
+        
         Get-AzureRMVMSS -ResourceGroupName Demo-SFWinContainers | Start-AzureRMVMSS
-        Get-AzureRMVM -ResourceGroupName Demo-k8shybrid | Start-AzureRMVM
+    #    Get-AzureRMVM -ResourceGroupName Demo-k8shybrid | Start-AzureRMVM
         
         # Move to demo dir and get IPs
         $SessionDir = "C:\Repos\Microsoft-and-Containers"
@@ -24,13 +28,7 @@
         $ServerCoreIP =  (Get-AzureRmPublicIpAddress -Name ContainerHost-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
         $UbuntuIP =  (Get-AzureRmPublicIpAddress -Name dockerubuntu-IP -ResourceGroupName DevOpsDemo-ContainerHost).IpAddress
     
-        # BASH
-        # new terminal
-    
-        bash
-        az account list 
-    
-        # az login
+     
     
     ## cloud shell
     
@@ -43,9 +41,15 @@
         ./shipyard.py pool add --configdir ~/clouddrive/batch 
 
         exit
+    ## end cloud shell
+     # BASH
+        # new terminal
     
-        bash
+        ubuntu
+     cd /mnt/c/Repos/Microsoft-and-Container
+        az account list 
     
+        # az login
         read -s AZURE_CLIENT_KEY
         echo $AZURE_CLIENT_KEY
 
@@ -53,8 +57,8 @@
       #  kubectl get nodes
        # kubectl delete deployment,service windowswebsite
       
-        az acs kubernetes get-credentials --resource-group=Demo-k8s  --name=myK8SCluster
-        kubectl get nodes
+       az aks kubernetes get-credentials --resource-group=Demo-AKS-1 --name=aks1
+       kubectl get nodes
         kubectl delete deployment,service linuxwebsite
         kubectl delete deploy,pod linuxwebsite-aci
         kubectl delete deploy,node aci-connector
@@ -75,8 +79,7 @@
         docker rmi 'marcusreg.azurecr.io/windowswebsite'
     
         $env:DOCKER_HOST = "tcp://$($UbuntuIP):2375"
-        docker login marcusreg.azurecr.io
-    
+       
         docker pull marcusreg.azurecr.io/linuxwebsite
         docker tag marcusreg.azurecr.io/linuxwebsite  marcusreg.azurecr.io/linuxwebsite:prod
         docker push  marcusreg.azurecr.io/linuxwebsite:prod
