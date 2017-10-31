@@ -72,6 +72,8 @@
         S:
         O:
         del *.*
+        $SessionDir = "C:\Repos\Microsoft-and-Containers"
+        Set-Location $SessionDir 
     
     
         $env:DOCKER_HOST = "tcp://$($ServerCoreIP):2375"

@@ -103,7 +103,7 @@
 
         kubectl get pod -o wide
 
-        kubectl get service -o wide
+        kubectl get service -o wide -w
     #endregion
     #region windows
     

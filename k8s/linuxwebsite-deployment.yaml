@@ -4,7 +4,7 @@ metadata:
   name: linuxwebsite
   namespace: default
 spec:
-  replicas: 3 l
+  replicas: 3
   template:
     metadata:
       labels:
