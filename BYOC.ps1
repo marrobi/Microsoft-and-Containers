@@ -92,7 +92,8 @@
         az aks get-credentials --resource-group=Demo-AKS-1 --name=aks1
 
        # kubectl proxy
-
+       az aks browse --resource-group=Demo-AKS-1 --name=aks1
+         
         kubectl get nodes
 
         kubectl create -f k8s/linuxwebsite-deployment.yaml
