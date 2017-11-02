@@ -64,7 +64,7 @@
         az container delete --name  'windows-website-demo' --resource-group 'tmpACIDemo' --yes
     #endregion
     #region Linux
-        az container create --name 'linux-website-demo' --image 'marcusreg.azurecr.io/linuxwebsite' --ip-address public --port 80  -g 'tmpACIDemo' --registry-login-server marcusreg.azurecr.io --registry-username "ce72d709-728d-45f7-ab6e-cd8e1c432b4d"  --registry-password $AZURE_CLIENT_KEY 
+        az container create --name 'linux-website-demo' --image 'marrobi/linuxwebsite' --ip-address public --port 80  -g 'tmpACIDemo' 
 
         
         az container show --name 'linux-website-demo' --resource-group 'tmpACIDemo' --query state
