@@ -1,7 +1,7 @@
 # Microsoft and Containers Session Resources
-Slides and demo scripts from my sessions on "Microsoft and Containers" and "Bring your own container - Running Containers on Microsoft Azure".
+Slides and demo scripts from my session  "Bring your own container - Running Containers on Microsoft Azure".
 
-Demo steps for my two sessions are in ```Microsoft and Containers Steps.ps1``` and ```BYOC.ps1```
+Demo steps for the session are in ```BYOC.sh```
 
 Please note this content will always be work in progress - it changes prior to each delivery - and demo content is to enable principles to be shown and is definitely not production ready!
 
@@ -14,7 +14,7 @@ The demos use the tools and products below:
 -   An Azure subscription
 
 
-#Step by Step Guides
+# Step by Step Guides
 - Using Docker Machine to provision a VM running Docker on Azure: https://github.com/marrobi/Microsoft-and-Containers/blob/master/DockerMachine/readme.md
 
 # Resources

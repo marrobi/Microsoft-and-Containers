@@ -12,10 +12,8 @@ spec:
     spec:      
       containers:
         - name: linuxwebsite
-          image: marcusreg.azurecr.io/linuxwebsite
+          image: marrobi/linuxwebsite
           ports:
           - containerPort: 80
           imagePullPolicy: Always  
-      imagePullSecrets:
-      - name:  "azure-registry"
-      nodeName: aci-connector
+      nodeName: virtual-kubelet-connector1-linux 
